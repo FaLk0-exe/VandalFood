@@ -51,7 +51,7 @@ CustomerId INT NOT NULL,
 ContactTypeId INT NOT NULL,
 Primary key(CustomerId,ContactTypeId),
 [Value] NVARCHAR(128) Collate Cyrillic_General_CI_AS NOT NULL,
-FOREIGN KEY(CustomerId) REFERENCES Customers(Id),
+FOREIGN KEY(CustomerId) REFERENCES Customers(Id) ON DELETE CASCADE,
 FOREIGN KEY (ContactTypeId) REFERENCES ContactTypes(Id)
 );
 

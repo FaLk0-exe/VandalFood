@@ -57,37 +57,11 @@ namespace VandalFood.DAL.Repositories
 
         public IEnumerable<Product> Get()
         {
-            var productQuery = _databaseContext.Products
-                .FromSqlRaw("SELECT Products.*, ProductTypes.* FROM Products INNER JOIN ProductTypes ON Products.ProductTypeId = ProductTypes.Id")
-                .AsNoTracking()
-                .ToList();
+            var productDtos = _databaseContext.Products.FromSqlRaw(
+                    $"SELECT Products.Id, Products.IsActive, Products.Description, Products.Weight, Products.Price, Products.ProductTypeId, ProductTypes.Title AS ProductTypeTitle FROM Products")
+                .Include(s=>s.ProductType).AsEnumerable();
 
-            var products = new List<Product>();
-
-            foreach (var productRow in productQuery)
-            {
-                var product = new Product
-                {
-                    Id = productRow.Id,
-                    IsActive = productRow.IsActive,
-                    Description = productRow.Description,
-                    Weight = productRow.Weight,
-                    Price = productRow.Price,
-                    Title = productRow.Title,
-                    ProductTypeId = productRow.ProductTypeId,
-                };
-
-                product.ProductType = new ProductType
-                {
-                    Id = productRow.ProductTypeId,
-                    Title = productRow.ProductType?.Title
-                };
-
-                products.Add(product);
-            }
-
-            return products;
-
+            return null;
         }
 
         public void Update(Product entity)
@@ -102,6 +76,23 @@ namespace VandalFood.DAL.Repositories
 
             _databaseContext.Database.ExecuteSqlRaw("UPDATE Products SET Title = @Title, IsActive = @IsActive, Description = @Description, Weight = @Weight, Price = @Price, ProductTypeId = @ProductTypeId WHERE Id = @Id",
                 titleParam, isActiveParam, descriptionParam, weightParam, priceParam, productTypeIdParam, idParam);
+        }
+
+        class ProductDto
+        {
+            public int Id { get; set; }
+
+            public bool? IsActive { get; set; }
+
+            public string Description { get; set; }
+
+            public int Weight { get; set; }
+
+            public decimal Price { get; set; }
+
+            public int ProductTypeId { get; set; }
+
+            public string ProductTypeTitle { get; set; }
         }
     }
 }

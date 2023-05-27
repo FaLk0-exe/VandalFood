@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VandalFood.BLL", "VandalFoo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VandalFood.DAL", "VandalFood.DAL\VandalFood.DAL.csproj", "{62CECEFB-7472-4E87-9520-D6E0AC311860}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VandalFood.Tests", "VandalFood.Tests\VandalFood.Tests.csproj", "{07F71BE8-9115-4180-9C89-697566775019}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{62CECEFB-7472-4E87-9520-D6E0AC311860}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62CECEFB-7472-4E87-9520-D6E0AC311860}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62CECEFB-7472-4E87-9520-D6E0AC311860}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07F71BE8-9115-4180-9C89-697566775019}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07F71BE8-9115-4180-9C89-697566775019}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07F71BE8-9115-4180-9C89-697566775019}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07F71BE8-9115-4180-9C89-697566775019}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

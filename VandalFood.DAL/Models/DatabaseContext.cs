@@ -82,7 +82,7 @@ public partial class DatabaseContext : DbContext
 
             entity.HasOne(d => d.Customer).WithMany(p => p.CustomerContacts)
                 .HasForeignKey(d => d.CustomerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__CustomerC__Custo__5441852A");
         });
 
