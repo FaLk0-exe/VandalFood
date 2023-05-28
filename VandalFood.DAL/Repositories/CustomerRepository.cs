@@ -1,158 +1,130 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VandalFood.DAL.Interfaces;
+using VandalFood.DAL.Mappers;
 using VandalFood.DAL.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace VandalFood.DAL.Repositories
 {
-    public class CustomerRepository : IRepository<Customer>
+    public class CustomerRepository : Repository<Customer>
     {
-        private DatabaseContext _databaseContext;
-        public CustomerRepository(DatabaseContext databaseContext)
+        private const string CREATE_CONTACT_QUERY = "INSERT INTO CustomerContacts (CustomerId, ContactTypeId, Value) VALUES (@CustomerId, @ContactTypeId, @Value)";
+        private const string CREATE_QUERY = "INSERT INTO Customers (Login, Password, LeftName) OUTPUT INSERTED.ID VALUES (@Login, @Password, @LeftName)";
+        private const string DELETE_QUERY = "DELETE FROM Customers WHERE Id = @CustomerId";
+        private const string UPDATE_QUERY = "UPDATE Customers SET Login = @Login, Password = @Password, LeftName = @LeftName WHERE Id = @Id";
+        private const string GET_CONTACTS_QUERY = "SELECT * FROM CustomerContacts WHERE CustomerId=@Id";
+        private const string GET_QUERY = "SELECT Id,[Login],[Password],LeftName FROM Customers";
+        private const string GET_BY_ID_QUERY = "SELECT Id,[Login],[Password],LeftName FROM Customers WHERE Id=@Id";
+        private const string DELETE_CONTACTS_QUERY = "DELETE FROM CustomerContacts WHERE CustomerId = @Id";
+
+        public CustomerRepository(IConfiguration config) : base(config)
         {
-            this._databaseContext = databaseContext;
         }
-        public void Create(Customer entity)
+        public CustomerRepository()
         {
-            using var transaction = _databaseContext.Database.BeginTransaction();
-            try
+        }
+        public override void Create(Customer entity)
+        {
+            var customerParameters = new SqlParameter[] {
+                new SqlParameter("@Login", entity.Login),
+            new SqlParameter("@Password", entity.Password),
+            new SqlParameter("@LeftName", entity.LeftName)
+            };
+            var customerId = (int)ExecuteScalarCommand(CREATE_QUERY, customerParameters);
+
+            foreach (var contact in entity.CustomerContacts)
             {
-                var loginParam = new SqlParameter("@Login", entity.Login);
-                var passwordParam = new SqlParameter("@Password", entity.Password);
-                var leftNameParam = new SqlParameter("@LeftName", entity.LeftName);
+                var contactParameters = new SqlParameter[] {
+                    new SqlParameter("@ContactTypeId", contact.ContactTypeId),
+                    new SqlParameter("@Value", contact.Value),
+                    new SqlParameter("@CustomerId", customerId)
+                };
+                ExecuteCommand(CREATE_CONTACT_QUERY, contactParameters);
+            }
+        }
 
-                _databaseContext.Database.ExecuteSqlRaw(
-                    "INSERT INTO Customers (Login, Password, LeftName) OUTPUT INSERTED.ID VALUES (@Login, @Password, @LeftName)",
-                    loginParam, passwordParam, leftNameParam);
 
-                var customerId = entity.Id;
-                foreach (var contact in entity.CustomerContacts)
+        public override void Delete(Customer entity)
+        {
+            var parameters = new SqlParameter[] { new SqlParameter("@CustomerId", entity.Id) };
+            ExecuteCommand(DELETE_QUERY, parameters);
+        }
+
+        public override Customer Get(int id)
+        {
+            Customer customer;
+            using (var connection = new SqlConnection(con))
+            {
+                connection.Open();
+                var customerParameter = new SqlParameter("@Id", id);
+                using (var command = new SqlCommand(GET_BY_ID_QUERY, connection))
                 {
-                    var contactTypeIdParam = new SqlParameter("@ContactTypeId", contact.ContactTypeId);
-                    var valueParam = new SqlParameter("@Value", contact.Value);
-                    var customerIdParam = new SqlParameter("@CustomerId", customerId);
+                    command.Parameters.Add(customerParameter);
+                    customer = new CustomerMapper().MapSingle(command);
 
-                    _databaseContext.Database.ExecuteSqlRaw(
-                        "INSERT INTO CustomerContacts (CustomerId, ContactTypeId, Value) VALUES (@CustomerId, @ContactTypeId, @Value)",
-                        customerIdParam, contactTypeIdParam, valueParam);
                 }
-
-                transaction.Commit();
-            }
-            catch (Exception)
-            {
-                transaction.Rollback();
-            }
-        }
-
-        public void Delete(Customer entity)
-        {
-            var customerIdParam = new SqlParameter("@CustomerId", entity.Id);
-            _databaseContext.Database.ExecuteSqlRaw("DELETE FROM Customers WHERE Id = @CustomerId", customerIdParam);
-        }
-
-        public Customer Get(int id)
-        {
-            var rawData = _databaseContext.Database.SqlQueryRaw<CustomerContactData>(
-                @$"SELECT c.Id, c.Login, c.Password, c.LeftName, cc.ContactTypeId, cc.Value 
-          FROM Customers c 
-          LEFT JOIN CustomerContacts cc ON c.Id = cc.CustomerId 
-          WHERE c.Id = @Id", new SqlParameter("@Id", id)).ToList();
-
-            var customerData = rawData
-                .GroupBy(d => new { d.Id, d.Login, d.Password, d.LeftName })
-                .Select(g => new Customer
+                if (customer != null)
                 {
-                    Id = g.Key.Id,
-                    Login = g.Key.Login,
-                    Password = g.Key.Password,
-                    LeftName = g.Key.LeftName,
-                    CustomerContacts = g.Where(x => x.ContactTypeId != null)
-                        .Select(x => new CustomerContact
-                        {
-                            CustomerId = x.Id,
-                            ContactTypeId = x.ContactTypeId.Value,
-                            Value = x.Value
-                        }).ToList()
-                }).FirstOrDefault();
-
-            return customerData;
+                    using (var command = new SqlCommand(GET_CONTACTS_QUERY, connection))
+                    {
+                        command.Parameters.Add(customerParameter);
+                        customer.CustomerContacts = new CustomerContactMapper().Map(command);
+                    }
+                }
+            }
+            return customer;
         }
 
-        public IEnumerable<Customer> Get()
+        public override IEnumerable<Customer> Get()
         {
-            var rawData = _databaseContext.Database.SqlQuery<CustomerContactData>(
-                @$"SELECT c.Id, c.Login, c.Password, c.LeftName, cc.ContactTypeId, cc.Value 
-          FROM Customers c 
-          LEFT JOIN CustomerContacts cc ON c.Id = cc.CustomerId").ToList();
-
-            var groupedData = rawData
-                .GroupBy(d => new { d.Id, d.Login, d.Password, d.LeftName })
-                .Select(g => new Customer
-                {
-                    Id = g.Key.Id,
-                    Login = g.Key.Login,
-                    Password = g.Key.Password,
-                    LeftName = g.Key.LeftName,
-                    CustomerContacts = g.Where(x => x.ContactTypeId != null)
-                        .Select(x => new CustomerContact
-                        {
-                            CustomerId = x.Id,
-                            ContactTypeId = x.ContactTypeId.Value,
-                            Value = x.Value
-                        }).ToList()
-                }).ToList();
-
-            return groupedData;
-        }
-
-        public void Update(Customer entity)
-        {
-            using var transaction = _databaseContext.Database.BeginTransaction();
-            try
+            List<Customer> customers;
+            using (var connection = new SqlConnection(con))
             {
-                _databaseContext.Database.ExecuteSqlRaw(
-                    "UPDATE Customers SET Login = @Login, Password = @Password, LeftName = @LeftName WHERE Id = @Id",
+                connection.Open();
+                using (var command = new SqlCommand(GET_QUERY, connection))
+                {
+                    customers = new CustomerMapper().Map(command);
+
+                }
+                foreach (var customer in customers)
+                {
+                    using (var command = new SqlCommand(GET_CONTACTS_QUERY, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@Id", customer.Id));
+                        customer.CustomerContacts = new CustomerContactMapper().Map(command);
+                    }
+                }
+            }
+            return customers;
+        }
+
+    public override void Update(Customer entity)
+    {
+        var customerParameters = new SqlParameter[] {
                     new SqlParameter("@Login", entity.Login),
                     new SqlParameter("@Password", entity.Password),
                     new SqlParameter("@LeftName", entity.LeftName),
                     new SqlParameter("@Id", entity.Id)
-                );
-                _databaseContext.Database.ExecuteSqlRaw(
-                    "DELETE FROM CustomerContacts WHERE CustomerId = @Id",
-                    new SqlParameter("@Id", entity.Id)
-                );
-
-                foreach (var contact in entity.CustomerContacts)
-                {
-                    _databaseContext.Database.ExecuteSqlRaw(
-                        "INSERT INTO CustomerContacts (CustomerId, ContactTypeId, Value) VALUES (@CustomerId, @ContactTypeId, @Value)",
-                        new SqlParameter("@CustomerId", entity.Id),
-                        new SqlParameter("@ContactTypeId", contact.ContactTypeId),
-                        new SqlParameter("@Value", contact.Value)
-                    );
-                }
-                transaction.Commit();
-            }
-            catch 
-            {
-                transaction.Rollback();
-            }
-        }
-
-        class CustomerContactData
+            };
+        ExecuteCommand(UPDATE_QUERY, customerParameters);
+        var deleteContactsParameters = new SqlParameter[] { new SqlParameter("@Id", entity.Id) };
+        ExecuteCommand(DELETE_CONTACTS_QUERY, deleteContactsParameters);
+        foreach (var contact in entity.CustomerContacts)
         {
-            public int Id { get; set; }
-            public string Login { get; set; }
-            public string Password { get; set; }
-            public string LeftName { get; set; }
-            public int? ContactTypeId { get; set; }
-            public string Value { get; set; }
+            var createContactParameters = new SqlParameter[] {
+                    new SqlParameter("@CustomerId", entity.Id),
+                    new SqlParameter("@ContactTypeId", contact.ContactTypeId),
+                    new SqlParameter("@Value", contact.Value)
+                   };
+            ExecuteCommand(CREATE_CONTACT_QUERY, createContactParameters);
         }
     }
+}
 }

@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VandalFood", "VandalFood\VandalFood.csproj", "{2D2B2C97-F7D1-498B-B1C5-3A44A822422E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VandalFood", "VandalFood\VandalFood.csproj", "{2D2B2C97-F7D1-498B-B1C5-3A44A822422E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VandalFood.BLL", "VandalFood.BLL\VandalFood.BLL.csproj", "{BF3AF659-B515-4DF1-8161-AAC347707080}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VandalFood.BLL", "VandalFood.BLL\VandalFood.BLL.csproj", "{BF3AF659-B515-4DF1-8161-AAC347707080}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VandalFood.DAL", "VandalFood.DAL\VandalFood.DAL.csproj", "{62CECEFB-7472-4E87-9520-D6E0AC311860}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VandalFood.DAL", "VandalFood.DAL\VandalFood.DAL.csproj", "{62CECEFB-7472-4E87-9520-D6E0AC311860}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VandalFood.Tests", "VandalFood.Tests\VandalFood.Tests.csproj", "{07F71BE8-9115-4180-9C89-697566775019}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VandalFood.Tests", "VandalFood.Tests\VandalFood.Tests.csproj", "{07F71BE8-9115-4180-9C89-697566775019}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{05862587-F666-4CFC-93E1-25BDE3F6BD6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{07F71BE8-9115-4180-9C89-697566775019}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07F71BE8-9115-4180-9C89-697566775019}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07F71BE8-9115-4180-9C89-697566775019}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05862587-F666-4CFC-93E1-25BDE3F6BD6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05862587-F666-4CFC-93E1-25BDE3F6BD6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05862587-F666-4CFC-93E1-25BDE3F6BD6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05862587-F666-4CFC-93E1-25BDE3F6BD6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

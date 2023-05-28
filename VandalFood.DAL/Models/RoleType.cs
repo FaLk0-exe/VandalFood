@@ -9,5 +9,4 @@ public partial class RoleType
 
     public string Title { get; set; } = null!;
 
-    public virtual ICollection<Operator> Operators { get; set; } = new List<Operator>();
 }

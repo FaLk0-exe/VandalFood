@@ -10,8 +10,4 @@ public partial class CustomerContact
     public int ContactTypeId { get; set; }
 
     public string Value { get; set; } = null!;
-
-    public virtual ContactType ContactType { get; set; } = null!;
-
-    public virtual Customer Customer { get; set; } = null!;
 }

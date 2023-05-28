@@ -9,5 +9,4 @@ public partial class ProductType
 
     public string Title { get; set; } = null!;
 
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

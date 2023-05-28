@@ -11,7 +11,4 @@ public partial class OrderContact
 
     public string Value { get; set; } = null!;
 
-    public virtual ContactType ContactType { get; set; } = null!;
-
-    public virtual CustomerOrder CustomerOrder { get; set; } = null!;
 }

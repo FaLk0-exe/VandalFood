@@ -13,7 +13,5 @@ public partial class OrderItem
 
     public decimal Price { get; set; }
 
-    public virtual CustomerOrder CustomerOrder { get; set; } = null!;
-
-    public virtual Product Product { get; set; } = null!;
+    public string Title { get; set; }
 }

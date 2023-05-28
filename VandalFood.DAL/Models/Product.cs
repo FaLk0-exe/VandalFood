@@ -7,7 +7,7 @@ public partial class Product
 {
     public int Id { get; set; }
 
-    public bool? IsActive { get; set; }
+    public bool IsActive { get; set; }
 
     public string Description { get; set; } = null!;
 

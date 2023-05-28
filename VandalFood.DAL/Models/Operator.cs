@@ -17,7 +17,4 @@ public partial class Operator
 
     public int RoleTypeId { get; set; }
 
-    public virtual ICollection<CustomerOrder> CustomerOrders { get; set; } = new List<CustomerOrder>();
-
-    public virtual RoleType RoleType { get; set; } = null!;
 }

@@ -1,98 +1,94 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VandalFood.DAL.Interfaces;
+using VandalFood.DAL.Mappers;
 using VandalFood.DAL.Models;
 
 namespace VandalFood.DAL.Repositories
 {
-    public class ProductRepository : IRepository<Product>
+    public sealed class ProductRepository : Repository<Product>
     {
-        private DatabaseContext _databaseContext;
-        public ProductRepository(DatabaseContext databaseContext)
+        private const string CREATE_QUERY = "INSERT INTO Products (Title, IsActive, Description, Weight, Price, ProductTypeId) VALUES (@Title, @IsActive, @Description, @Weight, @Price, @ProductTypeId)";
+        private const string UPDATE_QUERY = "UPDATE Products SET Title = @Title, IsActive = @IsActive, Description = @Description, Weight = @Weight, Price = @Price, ProductTypeId = @ProductTypeId WHERE Id = @Id";
+        private const string DELETE_QUERY = "DELETE FROM Products WHERE Id = @Id";
+        private const string GET_QUERY = "SELECT p.Id,IsActive,[Description],[Weight],Price,p.Title, ProductTypeId,pt.Title as 'pt.Title' FROM Products p INNER JOIN ProductTypes pt ON p.ProductTypeId = pt.Id";
+        private const string GET_BY_ID_QUERY = "SELECT p.Id,IsActive,[Description],[Weight],Price,p.Title, ProductTypeId,pt.Title as 'pt.Title' FROM Products p INNER JOIN ProductTypes pt ON p.ProductTypeId = pt.Id WHERE p.Id = @Id";
+        public ProductRepository(IConfiguration configuration):base(configuration)
         {
-            this._databaseContext = databaseContext;
-        }
-        public void Create(Product entity)
-        {
-            var titleParam = new SqlParameter("@Title", entity.Title);
-            var isActiveParam = new SqlParameter("@IsActive", entity.IsActive);
-            var descriptionParam = new SqlParameter("@Description", entity.Description);
-            var weightParam = new SqlParameter("@Weight", entity.Weight);
-            var priceParam = new SqlParameter("@Price", entity.Price);
-            var productTypeIdParam = new SqlParameter("@ProductTypeId", entity.ProductTypeId);
-
-            _databaseContext.Database.ExecuteSqlRaw("INSERT INTO Products (Title, IsActive, Description, Weight, Price, ProductTypeId) VALUES (@Title, @IsActive, @Description, @Weight, @Price, @ProductTypeId)",
-                titleParam, isActiveParam, descriptionParam, weightParam, priceParam, productTypeIdParam);
         }
 
-        public void Delete(Product entity)
-        {
-            var idParam = new SqlParameter("@Id", entity.Id);
-            _databaseContext.Database.ExecuteSqlRaw("DELETE FROM Products WHERE Id = @Id", idParam);
-        }
+        public ProductRepository() { }
 
-        public Product Get(int id)
+        public override void Create(Product entity)
         {
-            var idParam = new SqlParameter("@Id", id);
-            var product = _databaseContext.Products
-                .FromSqlRaw("SELECT * FROM Products WHERE Id = @Id", idParam)
-                .AsNoTracking()
-                .FirstOrDefault();
-            if (product != null)
+
+            var parameters = new SqlParameter[]
             {
-                var productType = _databaseContext.ProductTypes
-                    .FromSqlRaw("SELECT * FROM ProductTypes WHERE Id = @Id", new SqlParameter("@Id", product.ProductTypeId))
-                    .AsNoTracking()
-                    .FirstOrDefault();
-                product.ProductType = productType;
+                        new SqlParameter("@Title", entity.Title),
+                        new SqlParameter("@IsActive", entity.IsActive),
+                        new SqlParameter("@Description", entity.Description),
+                        new SqlParameter("@Weight", entity.Weight),
+                        new SqlParameter("@Price", entity.Price),
+                        new SqlParameter("@ProductTypeId", entity.ProductTypeId)
+            };
+            ExecuteCommand(CREATE_QUERY, parameters);
+        }
+
+        public override void Delete(Product entity)
+        {
+            var parameters = new SqlParameter[] { new SqlParameter("@Id", entity.Id) };
+            ExecuteCommand(DELETE_QUERY, parameters);
+        }
+
+        public override Product Get(int id)
+        {
+            Product product;
+            using (var connection = new SqlConnection(con))
+            {
+                connection.Open();
+                using (var command = new SqlCommand(GET_BY_ID_QUERY, connection))
+                {
+                    product = new ProductMapper().MapSingle(command);
+                }
+                connection.Close();
             }
             return product;
         }
 
-        public IEnumerable<Product> Get()
+        public override IEnumerable<Product> Get()
         {
-            var productDtos = _databaseContext.Products.FromSqlRaw(
-                    $"SELECT Products.Id, Products.IsActive, Products.Description, Products.Weight, Products.Price, Products.ProductTypeId, ProductTypes.Title AS ProductTypeTitle FROM Products")
-                .Include(s=>s.ProductType).AsEnumerable();
-
-            return null;
+            List<Product> products;
+            using (var connection = new SqlConnection(con))
+            {
+                connection.Open();
+                using (var command = new SqlCommand(GET_QUERY, connection))
+                {
+                    products = new ProductMapper().Map(command);
+                }
+                connection.Close();
+            }
+            return products;
         }
 
-        public void Update(Product entity)
+        public override void Update(Product entity)
         {
-            var idParam = new SqlParameter("@Id", entity.Id);
-            var titleParam = new SqlParameter("@Title", entity.Title);
-            var isActiveParam = new SqlParameter("@IsActive", entity.IsActive);
-            var descriptionParam = new SqlParameter("@Description", entity.Description);
-            var weightParam = new SqlParameter("@Weight", entity.Weight);
-            var priceParam = new SqlParameter("@Price", entity.Price);
-            var productTypeIdParam = new SqlParameter("@ProductTypeId", entity.ProductTypeId);
+            var parameters = new SqlParameter[] {
+            new SqlParameter("@Id", entity.Id),
+            new SqlParameter("@Title", entity.Title),
+            new SqlParameter("@IsActive", entity.IsActive),
+            new SqlParameter("@Description", entity.Description),
+            new SqlParameter("@Weight", entity.Weight),
+            new SqlParameter("@Price", entity.Price),
+            new SqlParameter("@ProductTypeId", entity.ProductTypeId)
+            };
+            ExecuteCommand(UPDATE_QUERY, parameters);
 
-            _databaseContext.Database.ExecuteSqlRaw("UPDATE Products SET Title = @Title, IsActive = @IsActive, Description = @Description, Weight = @Weight, Price = @Price, ProductTypeId = @ProductTypeId WHERE Id = @Id",
-                titleParam, isActiveParam, descriptionParam, weightParam, priceParam, productTypeIdParam, idParam);
-        }
-
-        class ProductDto
-        {
-            public int Id { get; set; }
-
-            public bool? IsActive { get; set; }
-
-            public string Description { get; set; }
-
-            public int Weight { get; set; }
-
-            public decimal Price { get; set; }
-
-            public int ProductTypeId { get; set; }
-
-            public string ProductTypeTitle { get; set; }
         }
     }
 }

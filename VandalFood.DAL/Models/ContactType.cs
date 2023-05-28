@@ -9,7 +9,4 @@ public partial class ContactType
 
     public string Title { get; set; } = null!;
 
-    public virtual ICollection<CustomerContact> CustomerContacts { get; set; } = new List<CustomerContact>();
-
-    public virtual ICollection<OrderContact> OrderContacts { get; set; } = new List<OrderContact>();
 }
