@@ -1,10 +1,11 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using VandalFood.DAL.Enums;
 using VandalFood.DAL.Models;
 using VandalFood.DAL.Repositories;
 
-
+/*
 var customerRepository = new CustomerRepository();
 var customers = customerRepository.Get();
 foreach(var customer in customers)
@@ -15,3 +16,8 @@ foreach(var customer in customers)
         Console.WriteLine($"{contact.ContactTypeId} {contact.Value}");
     }
 }
+*/
+
+RoleTypeEnum valu = (RoleTypeEnum)10;
+
+Console.WriteLine(valu);

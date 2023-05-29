@@ -24,8 +24,4 @@
     <ProjectReference Include="..\VandalFood.DAL\VandalFood.DAL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Ьщвуд\" />
-  </ItemGroup>
-
 </Project>
