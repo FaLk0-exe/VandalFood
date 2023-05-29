@@ -22,18 +22,12 @@ namespace VandalFood.DAL.Mappers
                 while (reader.Read())
                 {
                     var product = new Product();
-                    var fields = resultFields.Where(s => !s.First.Name.Contains("ProductType") && !s.First.Name.Contains("OrderItems"))
+                    var fields = resultFields
                         .ToList();
                     foreach (var f in fields)
                     {
                         f.First.SetValue(product, Convert.ChangeType(reader[f.Second],f.First.FieldType));
                     }
-                    product.ProductType = new ProductType
-                    {
-                        Id = (int)reader["ProductTypeId"],
-                        Title = (string)reader["pt.Title"],
-                    };
-                    product.ProductTypeId = (int)reader["ProductTypeId"];
                     products.Add(product);
 
                 }

@@ -19,24 +19,19 @@ namespace VandalFood.DAL.Mappers
                 while (reader.Read())
                 {
                     var @operator = new Operator();
-                    var fields = resultFields.Where(s => !s.First.Name.Contains("RoleType") && !s.First.Name.Contains("CustomerOrders"))
+                    var fields = resultFields
                         .ToList();
                     foreach (var f in fields)
                     {
                         f.First.SetValue(@operator, Convert.ChangeType(reader[f.Second], f.First.FieldType));
                     }
-                    @operator.RoleType = new RoleType
-                    {
-                        Id = (int)reader["RoleTypeId"],
-                        Title = (string)reader["rt.Title"],
-                    };
-                    @operator.RoleTypeId = (int)reader["RoleTypeId"];
                     operators.Add(@operator);
 
                 }
             }
             return operators;
         }
+
 
     }
 }

@@ -19,8 +19,7 @@ namespace VandalFood.DAL.Mappers
                 while (reader.Read())
                 {
                     var contact = new CustomerContact();
-                    var fields = resultFields.Where(s => !s.First.Name.Contains("Customer") && s.Second != "ContactType")
-                        .ToList();
+                    var fields = resultFields;
                     foreach (var f in fields)
                     {
                         f.First.SetValue(contact, Convert.ChangeType(reader[f.Second], f.First.FieldType));
