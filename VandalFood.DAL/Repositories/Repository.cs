@@ -15,11 +15,7 @@ namespace VandalFood.DAL.Repositories
     {
         protected const string CONNECTION_KEY = "DB:connection";
         protected IConfiguration _configuration;
-        protected string con = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\aprox\\source\\repos\\VandalFood\\VandalFood.DAL\\LocalDatabase\\FoodDatabase.mdf";
-        public Repository()
-        {
-
-        }
+        //protected string con = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\aprox\\source\\repos\\VandalFood\\VandalFood.DAL\\LocalDatabase\\FoodDatabase.mdf";
         public Repository(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -32,7 +28,7 @@ namespace VandalFood.DAL.Repositories
         public abstract void Create(T entity);
         protected void ExecuteCommand(string query, SqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(con))
+            using (var connection = new SqlConnection(_configuration[CONNECTION_KEY]))
             {
                 connection.Open();
                 using (var command = new SqlCommand(query, connection))
@@ -47,7 +43,7 @@ namespace VandalFood.DAL.Repositories
         protected object ExecuteScalarCommand(string query, SqlParameter[] parameters)
         {
             object result;
-            using (var connection = new SqlConnection(con))
+            using (var connection = new SqlConnection(_configuration[CONNECTION_KEY]))
             {
                 connection.Open();
                 using (var command = new SqlCommand(query, connection))

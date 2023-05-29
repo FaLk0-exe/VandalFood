@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VandalFood.DAL.Models;
 using VandalFood.DAL.Mappers;
+using Microsoft.Extensions.Configuration;
 
 namespace VandalFood.DAL.Repositories
 {
@@ -24,6 +25,11 @@ namespace VandalFood.DAL.Repositories
         private const string GET_BY_ID_QUERY = "SELECT * FROM CustomerOrders WHERE Id = @Id";
         private const string GET_ITEMS_QUERY = "SELECT ProductId,CustomerOrderId,Amount,Price,Products.[Title] as 'Title' FROM OrderItems INNER JOIN Products ON OrderItems.ProductId = Products.Id WHERE CustomerOrderId = @CustomerOrderId";
         private const string GET_CONTACTS_QUERY = "SELECT * FROM OrderContacts WHERE CustomerOrderId = @CustomerOrderId";
+
+        public CustomerOrderRepository(IConfiguration config) : base(config)
+        {
+        }
+
         public override void Create(CustomerOrder entity)
         {
             var parameters = new SqlParameter[]

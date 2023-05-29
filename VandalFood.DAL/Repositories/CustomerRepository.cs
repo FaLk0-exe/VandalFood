@@ -27,9 +27,6 @@ namespace VandalFood.DAL.Repositories
         public CustomerRepository(IConfiguration config) : base(config)
         {
         }
-        public CustomerRepository()
-        {
-        }
         public override void Create(Customer entity)
         {
             var customerParameters = new SqlParameter[] {

@@ -23,7 +23,6 @@ namespace VandalFood.DAL.Repositories
         {
         }
 
-        public ProductRepository() { }
 
         public override void Create(Product entity)
         {

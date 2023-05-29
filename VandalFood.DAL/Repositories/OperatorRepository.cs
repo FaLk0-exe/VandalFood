@@ -22,10 +22,6 @@ namespace VandalFood.DAL.Repositories
         {
         }
 
-        public OperatorRepository()
-        {
-                
-        }
 
         public override void Create(Operator entity)
         {
