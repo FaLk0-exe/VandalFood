@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace VandalFood.BLL.Interfaces
 {
-    internal class IValidator
+    public interface IValidator<T> where T : class
     {
+        public void Validate(T entity);
     }
 }

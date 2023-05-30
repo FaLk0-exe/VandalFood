@@ -8,7 +8,7 @@ namespace VandalFood.DAL.Enums
 {
     public enum ProductTypeEnum
     {
-        Drink,
+        Drink=1,
         Burger,
         Shawarma,
         Hotdog,

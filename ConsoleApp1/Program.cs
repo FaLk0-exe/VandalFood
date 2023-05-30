@@ -17,7 +17,3 @@ foreach(var customer in customers)
     }
 }
 */
-
-RoleTypeEnum valu = (RoleTypeEnum)10;
-
-Console.WriteLine(valu);

@@ -57,7 +57,7 @@ namespace VandalFood.DAL.Repositories
         public override Customer Get(int id)
         {
             Customer customer;
-            using (var connection = new SqlConnection(con))
+            using (var connection = new SqlConnection(_configuration[CONNECTION_KEY]))
             {
                 connection.Open();
                 var customerParameter = new SqlParameter("@Id", id);
@@ -71,7 +71,7 @@ namespace VandalFood.DAL.Repositories
                 {
                     using (var command = new SqlCommand(GET_CONTACTS_QUERY, connection))
                     {
-                        command.Parameters.Add(customerParameter);
+                        command.Parameters.Add(new SqlParameter("@Id", id));
                         customer.CustomerContacts = new CustomerContactMapper().Map(command);
                     }
                 }
@@ -82,7 +82,7 @@ namespace VandalFood.DAL.Repositories
         public override IEnumerable<Customer> Get()
         {
             List<Customer> customers;
-            using (var connection = new SqlConnection(con))
+            using (var connection = new SqlConnection(_configuration[CONNECTION_KEY]))
             {
                 connection.Open();
                 using (var command = new SqlCommand(GET_QUERY, connection))

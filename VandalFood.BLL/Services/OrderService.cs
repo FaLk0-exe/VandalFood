@@ -18,46 +18,46 @@ namespace VandalFood.BLL.Services
             _orderValidator = operatorValidator;
             _orderRepository = operatorRepository;
         }
-        public void CreateOperator(Order order)
+        public void CreateOperator(CustomerOrder order)
         {
             try
             {
-                _orderValidator.Validate(oper);
+                _orderValidator.Validate(order);
             }
             catch (ArgumentException)
             {
                 throw;
             }
-            _orderRepository.Create(oper);
+            _orderRepository.Create(order);
         }
-        public void UpdateOperator(Operator oper)
+        public void UpdateOperator(CustomerOrder order)
         {
-            if (_orderRepository.Get(oper.Id) is null)
-                throw new Exception($"Operator with ID {oper.Id} is not found");
+            if (_orderRepository.Get(order.Id) is null)
+                throw new Exception($"CustomerOrder with ID {order.Id} is not found");
             try
             {
-                _orderValidator.Validate(oper);
+                _orderValidator.Validate(order);
             }
             catch (ArgumentException)
             {
                 throw;
             }
-            _orderRepository.Update(oper);
+            _orderRepository.Update(order);
         }
 
         public void DeleteOperator(int id)
         {
-            var oper = _orderRepository.Get(id);
-            if (oper is null)
-                throw new Exception($"Operator with ID {id} is not found");
-            _orderRepository.Delete(oper);
+            var order = _orderRepository.Get(id);
+            if (order is null)
+                throw new Exception($"CustomerOrder with ID {id} is not found");
+            _orderRepository.Delete(order);
         }
 
-        public IEnumerable<Operator> Get()
+        public IEnumerable<CustomerOrder> Get()
         {
             return _orderRepository.Get();
         }
-        public Operator Get(int id)
+        public CustomerOrder Get(int id)
         {
             return _orderRepository.Get(id);
         }

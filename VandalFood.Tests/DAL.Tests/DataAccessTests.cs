@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VandalFood.DAL.Interfaces;
 using VandalFood.DAL.Models;
 using VandalFood.DAL.Repositories;
 

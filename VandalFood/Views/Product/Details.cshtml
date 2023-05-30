@@ -1,0 +1,43 @@
+﻿@using VandalFood.BLL.Helpers;
+@using VandalFood.DAL.Models;
+@model Product
+
+<h2>@Model.Title</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <img src="~/images/@Model.PhotoPath" class="img-fluid" alt="@Model.Title">
+    </div>
+    <div class="col-md-6">
+        <h4>Описание</h4>
+        <p>@Model.Description</p>
+
+        <h4>Подробнее о товаре</h4>
+        <dl class="row">
+            <dt class="col-sm-3">Вес</dt>
+            <dd class="col-sm-9">@Model.Weight гр.</dd>
+
+            <dt class="col-sm-3">Цена</dt>
+            <dd class="col-sm-9">@Model.Price.ToString("C")</dd>
+
+            <dt class="col-sm-3">Категория</dt>
+            <dd class="col-sm-9">@ProductTypeHelper.GetTitle(Model.ProductTypeId)</dd>
+        </dl>
+        <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity</label>
+            <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control">
+        </div>
+        <button class="btn btn-primary" onclick="addToCart(@Model.Id)">В корзину</button>
+        <button class="btn btn-success" onclick="goToOrder(@Model.Id)">Купить</button>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        function addToCart(productId) {
+            var quantity = document.getElementById('quantity').value;
+            var url = '@Url.Action("AddMulti", "Cart")?id=' + productId + '&quantity=' + quantity;
+            window.location.href = url;
+        }
+    </script>
+}

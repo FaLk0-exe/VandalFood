@@ -17,8 +17,8 @@ namespace VandalFood.DAL.Repositories
         private const string CREATE_QUERY = "INSERT INTO Products (Title, IsActive, Description, Weight, Price, ProductTypeId) VALUES (@Title, @IsActive, @Description, @Weight, @Price, @ProductTypeId)";
         private const string UPDATE_QUERY = "UPDATE Products SET Title = @Title, IsActive = @IsActive, Description = @Description, Weight = @Weight, Price = @Price, ProductTypeId = @ProductTypeId WHERE Id = @Id";
         private const string DELETE_QUERY = "DELETE FROM Products WHERE Id = @Id";
-        private const string GET_QUERY = "SELECT p.Id,IsActive,[Description],[Weight],Price,p.Title, ProductTypeId,pt.Title as 'pt.Title' FROM Products p INNER JOIN ProductTypes pt ON p.ProductTypeId = pt.Id";
-        private const string GET_BY_ID_QUERY = "SELECT p.Id,IsActive,[Description],[Weight],Price,p.Title, ProductTypeId,pt.Title as 'pt.Title' FROM Products p INNER JOIN ProductTypes pt ON p.ProductTypeId = pt.Id WHERE p.Id = @Id";
+        private const string GET_QUERY = "SELECT p.Id,IsActive,[Description],[Weight],Price,p.Title, PhotoPath, ProductTypeId,pt.Title as 'pt.Title' FROM Products p INNER JOIN ProductTypes pt ON p.ProductTypeId = pt.Id";
+        private const string GET_BY_ID_QUERY = "SELECT p.Id,IsActive,[Description],[Weight],Price, p.Title,PhotoPath, ProductTypeId,pt.Title as 'pt.Title' FROM Products p INNER JOIN ProductTypes pt ON p.ProductTypeId = pt.Id WHERE p.Id = @Id";
         public ProductRepository(IConfiguration configuration):base(configuration)
         {
         }
@@ -48,11 +48,12 @@ namespace VandalFood.DAL.Repositories
         public override Product Get(int id)
         {
             Product product;
-            using (var connection = new SqlConnection(con))
+            using (var connection = new SqlConnection(_configuration[CONNECTION_KEY]))
             {
                 connection.Open();
                 using (var command = new SqlCommand(GET_BY_ID_QUERY, connection))
                 {
+                    command.Parameters.Add(new SqlParameter("@Id", id));
                     product = new ProductMapper().MapSingle(command);
                 }
                 connection.Close();
@@ -63,7 +64,7 @@ namespace VandalFood.DAL.Repositories
         public override IEnumerable<Product> Get()
         {
             List<Product> products;
-            using (var connection = new SqlConnection(con))
+            using (var connection = new SqlConnection(_configuration[CONNECTION_KEY]))
             {
                 connection.Open();
                 using (var command = new SqlCommand(GET_QUERY, connection))

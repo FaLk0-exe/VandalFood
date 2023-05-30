@@ -1,0 +1,53 @@
+﻿@model VandalFood.Models.Authorization.RegistrationModel
+
+@{
+    ViewData["Title"] = "SignUp";
+}
+
+<h1>Реєстрація</h1>
+
+<h4>Введіть свої дані</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="TrySignUp">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Login" class="control-label">Логін</label>
+                <input asp-for="Login" class="form-control" />
+                <span asp-validation-for="Login" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label">Пароль</label>
+                <input type="password" asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LeftName" class="control-label">Ваше ім'я</label>
+                <input asp-for="LeftName" class="form-control" />
+                <span asp-validation-for="LeftName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label">Номер телефону</label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <span>Вже є обліковий запис?</span>     <a asp-controller="Account" asp-action="SignIn">Авторизуватися</a>
+            </div>
+            <div class="form-group mt-2">
+                <input type="submit" value="Зареєструватися" class="btn btn-primary" />
+            </div>
+            <div class="form-group">
+                <span class="text-danger">@(ViewData["message"]??"")</span>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -8,7 +8,7 @@ namespace VandalFood.DAL.Enums
 {
     public enum OrderStatusEnum
     {
-        AwaitingProcessing,
+        AwaitingProcessing=1,
         Confirmed,
         AwaitingPreparation,
         AwaitingDelivery,

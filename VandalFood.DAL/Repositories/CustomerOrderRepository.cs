@@ -12,7 +12,7 @@ namespace VandalFood.DAL.Repositories
 {
     public class CustomerOrderRepository : Repository<CustomerOrder>
     {
-        private const string CREATE_QUERY = "INSERT INTO CustomerOrders (OperatorId, OrderStatusId, OrderDate, CustomerName) OUTPUT INSERTED.ID VALUES (@OperatorId, @OrderStatusId, @OrderDate, @CustomerName)";
+        private const string CREATE_QUERY = "INSERT INTO CustomerOrders (OrderStatusId, OrderDate, CustomerName) OUTPUT INSERTED.ID VALUES (@OrderStatusId, @OrderDate, @CustomerName)";
         private const string CREATE_ITEM_QUERY = "INSERT INTO OrderItems (ProductId, CustomerOrderId, Amount, Price) VALUES (@ProductId, @CustomerOrderId, @Amount, @Price)";
         private const string CREATE_CONTACT_QUERY = "INSERT INTO OrderContacts (CustomerOrderId, ContactTypeId, Value) VALUES (@CustomerOrderId, @ContactTypeId, @Value)";
         private const string UPDATE_QUERY = "UPDATE CustomerOrders SET OperatorId = @OperatorId, OrderStatusId = @OrderStatusId, CustomerName = @CustomerName WHERE Id = @Id";
@@ -34,7 +34,6 @@ namespace VandalFood.DAL.Repositories
         {
             var parameters = new SqlParameter[]
             {
-                new SqlParameter("@OperatorId", entity.OperatorId),
                 new SqlParameter("@OrderStatusId", entity.OrderStatusId),
                 new SqlParameter("@OrderDate", entity.OrderDate),
                 new SqlParameter("@CustomerName", entity.CustomerName)
@@ -135,7 +134,7 @@ namespace VandalFood.DAL.Repositories
             var contactMapper = new OrderContactMapper();
             var itemMapper = new OrderItemMapper();
             CustomerOrder order;
-            using (SqlConnection connection = new SqlConnection(con))
+            using (SqlConnection connection = new SqlConnection(_configuration[CONNECTION_KEY]))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand(GET_BY_ID_QUERY, connection))
@@ -167,7 +166,7 @@ namespace VandalFood.DAL.Repositories
         var contactMapper = new OrderContactMapper();
         var itemMapper = new OrderItemMapper();
         List<CustomerOrder> orders;
-        using (SqlConnection connection = new SqlConnection(con))
+        using (SqlConnection connection = new SqlConnection(_configuration[CONNECTION_KEY]))
         {
             connection.Open();
             using (SqlCommand command = new SqlCommand(GET_QUERY, connection))

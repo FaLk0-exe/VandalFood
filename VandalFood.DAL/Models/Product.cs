@@ -17,5 +17,6 @@ public partial class Product
     public decimal Price { get; set; }
 
     public int ProductTypeId { get; set; }
+    public string PhotoPath { get; set; }
 }
  
