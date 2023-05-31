@@ -19,10 +19,18 @@ namespace VandalFood.DAL.Mappers
                 while (reader.Read())
                 {
                     var customerOrder = new CustomerOrder();
-                    var fields = resultFields.Where(s => !s.First.Name.Contains("OrderContacts") && !s.First.Name.Contains("OrderItems")).ToList();
+                    var fields = resultFields.Where(s => !s.First.Name.Contains("OrderContacts") && !s.First.Name.Contains("OrderItems") && s.Second!="OperatorId").ToList();
                     foreach (var f in fields)
                     {
                         f.First.SetValue(customerOrder, Convert.ChangeType(reader[f.Second], f.First.FieldType));
+                    }
+                    if (reader["OperatorId"] != DBNull.Value)
+                    {
+                        customerOrder.OperatorId = (int)reader["OperatorId"];
+                    }
+                    else
+                    {
+                        customerOrder.OperatorId = null;
                     }
                     customerOrders.Add(customerOrder);
                 }

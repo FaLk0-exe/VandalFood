@@ -29,34 +29,17 @@ namespace VandalFood.Controllers
             var product = productRepository.Get(id);
             if (product is null)
                 return NotFound();
-            List<CartModel> cartProducts;
-            var cartRaw = HttpContext.Session.GetString("cart");
-            if (cartRaw is null)
-            {
-                cartProducts = new List<CartModel>();
-                cartProducts.Add(new CartModel { Product = product, Count = 1 });
-            }
-            else
-            {
-                cartProducts = JsonSerializer.Deserialize<List<CartModel>>(cartRaw);
-                var existedItem = cartProducts.FirstOrDefault(s => s.Product.Id == product.Id);
-                if (existedItem is null)
-                {
-                    existedItem = new CartModel
-                    {
-                        Product = product,
-                        Count = 1
-                    };
-                    cartProducts.Add(existedItem);
-                }
-                else
-                {
-                    existedItem.Count++;
-                }
-            }
-            HttpContext.Session.SetString("cart", JsonSerializer.Serialize(cartProducts));
-            HttpContext.Session.SetInt32("cartCount", cartProducts.Count());
+            AddToCart(product, id);
             return RedirectToAction(controllerName: "product", actionName: "get");
+        }
+
+        public ActionResult AddQuick([FromServices] ProductRepository productRepository, int id)
+        {
+            var product = productRepository.Get(id);
+            if (product is null)
+                return NotFound();
+            AddToCart(product, id);
+            return RedirectToAction(controllerName: "cart", actionName: "details");
         }
 
         public ActionResult Increase([FromServices] ProductRepository productRepository, int id)
@@ -140,6 +123,38 @@ namespace VandalFood.Controllers
             HttpContext.Session.SetString("cart", JsonSerializer.Serialize(cartProducts));
             HttpContext.Session.SetInt32("cartCount", cartProducts.Count());
             return RedirectToAction(controllerName: "product", actionName: "details", routeValues: new { id = product.Id });
+        }
+
+        private void AddToCart(Product product, int id)
+        {
+            
+            List<CartModel> cartProducts;
+            var cartRaw = HttpContext.Session.GetString("cart");
+            if (cartRaw is null)
+            {
+                cartProducts = new List<CartModel>();
+                cartProducts.Add(new CartModel { Product = product, Count = 1 });
+            }
+            else
+            {
+                cartProducts = JsonSerializer.Deserialize<List<CartModel>>(cartRaw);
+                var existedItem = cartProducts.FirstOrDefault(s => s.Product.Id == product.Id);
+                if (existedItem is null)
+                {
+                    existedItem = new CartModel
+                    {
+                        Product = product,
+                        Count = 1
+                    };
+                    cartProducts.Add(existedItem);
+                }
+                else
+                {
+                    existedItem.Count++;
+                }
+            }
+            HttpContext.Session.SetString("cart", JsonSerializer.Serialize(cartProducts));
+            HttpContext.Session.SetInt32("cartCount", cartProducts.Count());
         }
     }
 }

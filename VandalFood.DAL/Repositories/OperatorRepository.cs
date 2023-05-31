@@ -16,8 +16,8 @@ namespace VandalFood.DAL.Repositories
         private const string CREATE_QUERY = "INSERT INTO Operators (Login, Password, LeftName, RightName, RoleTypeId) VALUES (@Login, @Password, @LeftName, @RightName, @RoleTypeId)";
         private const string DELETE_QUERY = "DELETE FROM Operators WHERE Id = @Id";
         private const string UPDATE_QUERY = "UPDATE Operators SET Login = @Login, Password = @Password, LeftName = @LeftName, RightName = @RightName, RoleTypeId = @RoleTypeId WHERE Id = @Id";
-        private const string GET_BY_ID_QUERY = "SELECT Operators.Id, [Login],[Password],LeftName,RightName,RoleTypeId,RoleTypes.Title as 'rt.Title' FROM Operators JOIN RoleTypes ON Operators.RoleTypeId = RoleTypes.Id WHERE Id = @Id";
-        private const string GET_QUERY = "SELECT Operators.Id, [Login],[Password],LeftName,RightName,RoleTypeId,RoleTypes.Title as 'rt.Title' FROM Operators JOIN RoleTypes ON Operators.RoleTypeId = RoleTypes.Id";
+        private const string GET_BY_ID_QUERY = "SELECT Id, [Login],[Password],LeftName,RightName,RoleTypeId FROM Operators WHERE Id = @Id";
+        private const string GET_QUERY = "SELECT Id, [Login],[Password],LeftName,RightName,RoleTypeId FROM Operators";
         public OperatorRepository(IConfiguration configuration):base(configuration)
         {
         }

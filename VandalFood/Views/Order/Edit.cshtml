@@ -1,0 +1,93 @@
+﻿@model VandalFood.Models.Order.OrderModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>OrderModel</h4>
+<hr />
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td class="align-middle">@item.Product.Title</td>
+                <td class="align-middle">@item.Product.Price.ToString("C")</td>
+                <td>
+                    <div class="input-group">
+                        <a class="btn btn-outline-secondary" type="button" asp-action="Decrease" asp-route-customerorderid="@Model.Id" asp-route-productid="@item.Product.Id">-</a>
+                        <input type="text" class="form-control" style="text-align:center" value="@item.Count" readonly>
+                        <a class="btn btn-outline-secondary" type="button" asp-action="Increase" asp-route-customerorderid="@Model.Id" asp-route-productid="@item.Product.Id">+</a>
+                    </div>
+                </td>
+                <td class="align-middle">@((item.Product.Price * item.Count).ToString("C"))</td>
+                <td>
+                    <a class="btn btn-danger" asp-action="DeleteItem" asp-route-customerorderid="@Model.Id" asp-route-productid="@item.Product.Id">Удалить</a>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>
+                <select class="form-select" asp-items="@ViewBag.Products" id="selectedProduct">
+                    <option selected disabled>Оберіть продукт</option>
+                </select>
+            </td>
+            <td><button class="btn btn-primary" onclick="addProduct(@Model.Id)">Додати продукт</button></td>
+        </tr>
+    </tbody>
+</table>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="TryEdit">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CustomerName" class="control-label"></label>
+                <input asp-for="CustomerName" class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mail" class="control-label">Пошта(опціональне)</label>
+                <input asp-for="Mail" class="form-control" />
+                <span asp-validation-for="Mail" class="text-danger"></span>
+            </div>
+            <br>
+            <div class="form-group">
+                <input type="submit" value="Застосувати" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Details" asp-route-id="@Model.Id">Повернутися до замовлення</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function addProduct(customerOrderId) {
+            var productId = document.getElementById('selectedProduct').value;
+            var url = '@Url.Action("AddItem", "Order")?customerOrderId=' + customerOrderId + '&productId=' + productId;
+            window.location.href = url;
+        }
+    </script>
+}

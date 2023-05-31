@@ -15,14 +15,14 @@ namespace VandalFood.BLL.Validators
         public void Validate(Product product)
         {
             if (product.Title.IsNullOrEmpty())
-                throw new ArgumentException("Title was null");
+                throw new ArgumentException("Назва не може бути пустою");
             if (product.Weight<0)
-                throw new ArgumentException("Weight has incorrect value");
+                throw new ArgumentException("Вага повинна бути більше 0");
             if (product.Price<0)
-                throw new ArgumentException("Price has incorrect value");
+                throw new ArgumentException("Ціна повинна бути більше 0");
             var enumValues = Enum.GetValues(typeof(ProductTypeEnum)).Cast<int>().ToList();
             if (!enumValues.Contains(product.ProductTypeId))
-                throw new ArgumentException("ProductTypeId has incorrect value");
+                throw new ArgumentException("Некоректний тип продукту");
         }
     }
 }

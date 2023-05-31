@@ -18,7 +18,7 @@ namespace VandalFood.DAL.Mappers
         {
             return Map(command).FirstOrDefault();
         }
-        protected IEnumerable<(FieldInfo First, string Second)> GetFields()
+        public IEnumerable<(FieldInfo First, string Second)> GetFields()
         {
             var type = typeof(T);
             var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);

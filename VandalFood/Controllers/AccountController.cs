@@ -68,12 +68,14 @@ namespace VandalFood.Controllers
         public ActionResult TrySignIn([FromServices] OperatorService operatorService,[FromServices] CustomerService customerService,
             AuthorizationModel model)
         {
+
             List<Claim> claims;
             var customers = customerService.Get();
             var operators = operatorService.Get();
             var correctCustomer = customers.FirstOrDefault(c => c.Login == model.Login && Md5Helper.GetMd5(model.Password) == c.Password);
             if(correctCustomer != null)
             {
+                HttpContext.SignOutAsync();
                 claims = 
                     new List<Claim>()
                     {
@@ -94,11 +96,12 @@ namespace VandalFood.Controllers
 
             if (correctOperator != null)
             {
+                HttpContext.SignOutAsync();
                 claims =
                     new List<Claim>()
                     {
-                        new Claim("Login",correctCustomer.Login),
-                        new Claim("LeftName", correctCustomer.LeftName),
+                        new Claim("Login",correctOperator.Login),
+                        new Claim("LeftName", correctOperator.LeftName),
                         new Claim("RightName",correctOperator.RightName),
                         new Claim(ClaimTypes.Role,"Operator")
                     };
@@ -108,6 +111,20 @@ namespace VandalFood.Controllers
                 return RedirectToAction(controllerName:"Product",actionName:"Get");
             }
             return RedirectToAction(controllerName: "Account", actionName: "SignIn", routeValues:new { message = "Неправильний логін або пароль" });
+        }
+
+        public ActionResult Admin()
+        {
+            var claims =
+                    new List<Claim>()
+                    {
+                        new Claim("Admin","Admin"),
+                        new Claim(ClaimTypes.Role,"Admin")
+                    };
+            var adminClaimsIdentity = new ClaimsIdentity(claims, "AdminIdentity");
+            var adminClaimsPrincipal = new ClaimsPrincipal(adminClaimsIdentity);
+            HttpContext.SignInAsync(adminClaimsPrincipal);
+            return RedirectToAction(controllerName: "Product", actionName: "Get");
         }
 
         public ActionResult TrySignOut()

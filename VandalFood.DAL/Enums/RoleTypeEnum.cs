@@ -8,7 +8,7 @@ namespace VandalFood.DAL.Enums
 {
     public enum RoleTypeEnum
     {
-        Operator,
+        Operator=1,
         Cook,
         Courier
     }

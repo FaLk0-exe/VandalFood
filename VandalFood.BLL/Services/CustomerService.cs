@@ -19,7 +19,7 @@ namespace VandalFood.BLL.Services
             _operatorValidator = operatorValidator;
             _customerRepository = operatorRepository;
         }
-        public void CreateOperator(Customer customer)
+        public void Create(Customer customer)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace VandalFood.BLL.Services
             customer.Password = Md5Helper.GetMd5(customer.Password);
             _customerRepository.Create(customer);
         }
-        public void UpdateOperator(Customer customer)
+        public void Update(Customer customer)
         {
             var existedCustomer = _customerRepository.Get(customer.Id);
             if (existedCustomer is null)
@@ -50,7 +50,7 @@ namespace VandalFood.BLL.Services
             _customerRepository.Update(customer);
         }
 
-        public void DeleteOperator(int id)
+        public void Delete(int id)
         {
             var customer = _customerRepository.Get(id);
             if (customer is null)

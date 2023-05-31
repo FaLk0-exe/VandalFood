@@ -1,0 +1,79 @@
+﻿@using VandalFood.BLL.Helpers;
+@using VandalFood.DAL.Enums;
+@model VandalFood.DAL.Models.CustomerOrder
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>CustomerOrder</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Номер замовлення
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Id.ToString("D4")
+        </dd>
+        <dt class="col-sm-2">
+            Дата замовлення
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OrderDate)
+        </dd>
+        <dt class="col-sm-2">
+            Ім'я клієнту
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CustomerName)
+        </dd>
+        <dd class="col-sm-2">
+            Номер телефону
+        </dd>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(modelItem => Model.OrderContacts.FirstOrDefault(s=>s.ContactTypeId==(int)ContactTypeEnum.Phone).Value)
+        </dd>
+        <dd class="col-sm-2">
+            Адреса
+        </dd>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(modelItem => Model.OrderContacts.FirstOrDefault(s=>s.ContactTypeId==(int)ContactTypeEnum.Address).Value)
+        </dd>
+        @if (Context.User.IsInRole("Admin"))
+        {
+            <dd class="col-sm-2">
+                Статус замовлення
+            </dd>
+            <dd class="col-sm-10">
+                @OrderStatusHelper.GetTitle(Model.OrderStatusId)
+            </dd>
+            @if(Model.OperatorId.HasValue)
+            {
+            <dd class="col-sm-2">
+                Оператор
+            </dd>
+            <dd class="col-sm-10">
+                @ViewData["operator"].ToString()
+            </dd>
+            }
+        }
+    </dl>
+</div>
+<div>
+    @if (Model.OrderStatusId == 1)
+    {
+        @Html.ActionLink("Редагувати замовлення", "Edit", new { id = Model.Id })
+        <br>
+        <br>
+        @Html.ActionLink("Підтвердити замовлення", "Confirm", new { id = Model.Id })
+        <br>
+        <br>
+        @Html.ActionLink("Відхилити замовлення", "Decline", new { id = Model.Id })
+        <br>
+        <br>
+    }
+    <a asp-action="Get">Назад до списку</a>
+</div>

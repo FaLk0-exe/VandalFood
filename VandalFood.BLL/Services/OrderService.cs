@@ -13,12 +13,14 @@ namespace VandalFood.BLL.Services
     {
         private OrderValidator _orderValidator;
         private CustomerOrderRepository _orderRepository;
-        public OrderService(OrderValidator operatorValidator, CustomerOrderRepository operatorRepository)
+        private ProductRepository _productRepository;
+        public OrderService(OrderValidator operatorValidator, CustomerOrderRepository operatorRepository,ProductRepository productRepository)
         {
             _orderValidator = operatorValidator;
             _orderRepository = operatorRepository;
+            _productRepository = productRepository;
         }
-        public void CreateOperator(CustomerOrder order)
+        public void Create(CustomerOrder order)
         {
             try
             {
@@ -30,7 +32,7 @@ namespace VandalFood.BLL.Services
             }
             _orderRepository.Create(order);
         }
-        public void UpdateOperator(CustomerOrder order)
+        public void Update(CustomerOrder order)
         {
             if (_orderRepository.Get(order.Id) is null)
                 throw new Exception($"CustomerOrder with ID {order.Id} is not found");
@@ -45,7 +47,7 @@ namespace VandalFood.BLL.Services
             _orderRepository.Update(order);
         }
 
-        public void DeleteOperator(int id)
+        public void Delete(int id)
         {
             var order = _orderRepository.Get(id);
             if (order is null)
@@ -61,5 +63,39 @@ namespace VandalFood.BLL.Services
         {
             return _orderRepository.Get(id);
         }
+
+        public OrderItem GetItem(int productId, int customerOrderId)
+        {
+            return _orderRepository.GetItem(productId, customerOrderId);
+        }
+
+        public void UpdateItem(OrderItem item)
+        {
+            _orderRepository.UpdateItem(item);
+        }
+
+        public void DeleteItem(int customerOrderId, int productId)
+        {
+            _orderRepository.DeleteItem(productId, customerOrderId);
+        }
+
+        public void AddItem(int productId,int customerOrderId)
+        {
+            var product = _productRepository.Get(productId);
+            _orderRepository.CreateItem(new OrderItem
+            {
+                Price = product.Price,
+                ProductId = productId,
+                CustomerOrderId = customerOrderId,
+                Amount = 1,
+                Title = product.Title
+            });
+        }
+
+        public void AddContact(OrderContact orderContact)
+        {
+            _orderRepository.CreateContact(orderContact);
+        }
+
     }
 }

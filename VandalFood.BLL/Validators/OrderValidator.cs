@@ -21,10 +21,10 @@ namespace VandalFood.BLL.Validators
                 throw new ArgumentException("OrderContacts should has more than 0 records");
             if (order.OrderContacts.DistinctBy(s => s.ContactTypeId).Count() != order.OrderContacts.Count())
                 throw new ArgumentException("Contacts should be a distinct by contact type");
-            if (order.OrderContacts.Any(s => s.CustomerOrderId == 0 || s.ContactTypeId == 0 || s.Value.IsNullOrEmpty()))
-                throw new ArgumentException("Each contact should has non-empty Value, CustomerOrderId and ContactId");
-            if(order.OrderItems.Any(s=>s.Amount<=0 || s.Price<0 || s.ProductId == 0 || s.CustomerOrderId ==0))
-                throw new ArgumentException("Each item should has non-empty Amount, Price, ProductId and CustomerOrderId");
+      /*      if (order.OrderContacts.Any(s => s.CustomerOrderId == 0 || s.ContactTypeId == 0 || s.Value.IsNullOrEmpty()))
+                throw new ArgumentException("Each contact should has non-empty Value, CustomerOrderId and ContactId");*/
+          /*  if(order.OrderItems.Any(s=>s.Amount<=0 || s.Price<0 || s.ProductId == 0 || s.CustomerOrderId ==0))
+                throw new ArgumentException("Each item should has non-empty Amount, Price, ProductId and CustomerOrderId");*/
             if (order.OrderItems.DistinctBy(s => s.ProductId).Count() != order.OrderItems.Count())
                 throw new ArgumentException("Order items should be a distonct by ProductId");
             var equalItemId = order.OrderItems.First().CustomerOrderId;

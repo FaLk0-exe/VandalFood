@@ -1,0 +1,1 @@
+﻿update CustomerOrders SET OrderStatusId=1;

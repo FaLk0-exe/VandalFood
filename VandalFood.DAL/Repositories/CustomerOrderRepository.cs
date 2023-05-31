@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using VandalFood.DAL.Models;
 using VandalFood.DAL.Mappers;
 using Microsoft.Extensions.Configuration;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace VandalFood.DAL.Repositories
 {
@@ -23,7 +24,8 @@ namespace VandalFood.DAL.Repositories
         private const string DELETE_QUERY = "DELETE FROM CustomerOrder WHERE Id = @Id";
         private const string GET_QUERY = "SELECT * FROM CustomerOrders";
         private const string GET_BY_ID_QUERY = "SELECT * FROM CustomerOrders WHERE Id = @Id";
-        private const string GET_ITEMS_QUERY = "SELECT ProductId,CustomerOrderId,Amount,Price,Products.[Title] as 'Title' FROM OrderItems INNER JOIN Products ON OrderItems.ProductId = Products.Id WHERE CustomerOrderId = @CustomerOrderId";
+        private const string GET_ITEMS_QUERY = "SELECT ProductId,CustomerOrderId,Amount,OrderItems.Price,Products.[Title] as 'Title' FROM OrderItems INNER JOIN Products ON OrderItems.ProductId = Products.Id WHERE CustomerOrderId = @CustomerOrderId";
+        private const string GET_ITEM_BY_ID_QUERY = "SELECT ProductId,CustomerOrderId,Amount,OrderItems.Price,Products.[Title] as 'Title' FROM OrderItems INNER JOIN Products ON OrderItems.ProductId = Products.Id WHERE CustomerOrderId = @CustomerOrderId AND ProductId=@ProductId";
         private const string GET_CONTACTS_QUERY = "SELECT * FROM OrderContacts WHERE CustomerOrderId = @CustomerOrderId";
 
         public CustomerOrderRepository(IConfiguration config) : base(config)
@@ -95,14 +97,22 @@ namespace VandalFood.DAL.Repositories
 
         public override void Update(CustomerOrder entity)
         {
-            var parameters = new SqlParameter[] {
-                new SqlParameter("@OperatorId", entity.OperatorId),
+            var parameters = new List<SqlParameter> {
                 new SqlParameter("@OrderStatusId", entity.OrderStatusId),
                 new SqlParameter("@OrderDate", entity.OrderDate),
                 new SqlParameter("@CustomerName", entity.CustomerName),
                 new SqlParameter("@Id", entity.Id)
             };
-            ExecuteCommand(UPDATE_QUERY, parameters);
+            if (entity.OperatorId.HasValue)
+                parameters.Add(new SqlParameter("@OperatorId", entity.OperatorId.Value));
+            else
+                parameters.Add(new SqlParameter("@OperatorId", DBNull.Value));
+            ExecuteCommand(UPDATE_QUERY, parameters.ToArray());
+            foreach (var contact in entity.OrderContacts)
+            {
+                contact.CustomerOrderId = entity.Id;
+                UpdateContact(contact);
+            }
 
         }
 
@@ -160,37 +170,55 @@ namespace VandalFood.DAL.Repositories
             return order;
         }
 
-    public override IEnumerable<CustomerOrder> Get()
-    {
-        var orderMapper = new CustomerOrderMapper();
-        var contactMapper = new OrderContactMapper();
-        var itemMapper = new OrderItemMapper();
-        List<CustomerOrder> orders;
-        using (SqlConnection connection = new SqlConnection(_configuration[CONNECTION_KEY]))
+        public override IEnumerable<CustomerOrder> Get()
         {
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(GET_QUERY, connection))
+            var orderMapper = new CustomerOrderMapper();
+            var contactMapper = new OrderContactMapper();
+            var itemMapper = new OrderItemMapper();
+            List<CustomerOrder> orders;
+            using (SqlConnection connection = new SqlConnection(_configuration[CONNECTION_KEY]))
             {
-                orders = orderMapper.Map(command);
-            }
-            foreach (var order in orders)
-            {
-                using (SqlCommand command = new SqlCommand(GET_CONTACTS_QUERY, connection))
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(GET_QUERY, connection))
                 {
-                    command.Parameters.Add(new SqlParameter("@CustomerOrderId", order.Id));
-                    order.OrderContacts = contactMapper.Map(command);
+                    orders = orderMapper.Map(command);
                 }
-                using (SqlCommand command = new SqlCommand(GET_ITEMS_QUERY, connection))
+                foreach (var order in orders)
                 {
-                    command.Parameters.Add(new SqlParameter("@CustomerOrderId", order.Id));
-                    order.OrderItems = itemMapper.Map(command);
-                }
+                    using (SqlCommand command = new SqlCommand(GET_CONTACTS_QUERY, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@CustomerOrderId", order.Id));
+                        order.OrderContacts = contactMapper.Map(command);
+                    }
+                    using (SqlCommand command = new SqlCommand(GET_ITEMS_QUERY, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@CustomerOrderId", order.Id));
+                        order.OrderItems = itemMapper.Map(command);
+                    }
 
+                }
+                connection.Close();
             }
-            connection.Close();
+            return orders;
+
         }
-        return orders;
 
+        public OrderItem GetItem(int productId,int customerOrderId)
+        {
+            var itemMapper = new OrderItemMapper();
+            OrderItem item;
+            using (SqlConnection connection = new SqlConnection(_configuration[CONNECTION_KEY]))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(GET_ITEM_BY_ID_QUERY, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@CustomerOrderId", customerOrderId));
+                    command.Parameters.Add(new SqlParameter("@ProductId", productId));
+                    item = itemMapper.MapSingle(command);
+                }
+                connection.Close();
+            }
+            return item;
+        }
     }
-}
 }

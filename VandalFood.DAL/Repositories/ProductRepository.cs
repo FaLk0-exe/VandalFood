@@ -14,11 +14,11 @@ namespace VandalFood.DAL.Repositories
 {
     public sealed class ProductRepository : Repository<Product>
     {
-        private const string CREATE_QUERY = "INSERT INTO Products (Title, IsActive, Description, Weight, Price, ProductTypeId) VALUES (@Title, @IsActive, @Description, @Weight, @Price, @ProductTypeId)";
-        private const string UPDATE_QUERY = "UPDATE Products SET Title = @Title, IsActive = @IsActive, Description = @Description, Weight = @Weight, Price = @Price, ProductTypeId = @ProductTypeId WHERE Id = @Id";
+        private const string CREATE_QUERY = "INSERT INTO Products (Title, IsActive, Description, Weight, Price, ProductTypeId,PhotoPath) VALUES (@Title, @IsActive, @Description, @Weight, @Price, @ProductTypeId,@PhotoPath)";
+        private const string UPDATE_QUERY = "UPDATE Products SET Title = @Title, IsActive = @IsActive, Description = @Description, Weight = @Weight, Price = @Price, ProductTypeId = @ProductTypeId, PhotoPath = @PhotoPath WHERE Id = @Id";
         private const string DELETE_QUERY = "DELETE FROM Products WHERE Id = @Id";
-        private const string GET_QUERY = "SELECT p.Id,IsActive,[Description],[Weight],Price,p.Title, PhotoPath, ProductTypeId,pt.Title as 'pt.Title' FROM Products p INNER JOIN ProductTypes pt ON p.ProductTypeId = pt.Id";
-        private const string GET_BY_ID_QUERY = "SELECT p.Id,IsActive,[Description],[Weight],Price, p.Title,PhotoPath, ProductTypeId,pt.Title as 'pt.Title' FROM Products p INNER JOIN ProductTypes pt ON p.ProductTypeId = pt.Id WHERE p.Id = @Id";
+        private const string GET_QUERY = "SELECT Id,IsActive,[Description],[Weight],Price,Title, PhotoPath, ProductTypeId FROM Products";
+        private const string GET_BY_ID_QUERY = "SELECT Id,IsActive,[Description],[Weight],Price, Title,PhotoPath, ProductTypeId FROM Products WHERE Id = @Id";
         public ProductRepository(IConfiguration configuration):base(configuration)
         {
         }
@@ -34,7 +34,8 @@ namespace VandalFood.DAL.Repositories
                         new SqlParameter("@Description", entity.Description),
                         new SqlParameter("@Weight", entity.Weight),
                         new SqlParameter("@Price", entity.Price),
-                        new SqlParameter("@ProductTypeId", entity.ProductTypeId)
+                        new SqlParameter("@ProductTypeId", entity.ProductTypeId),
+                        new SqlParameter("@PhotoPath", entity.PhotoPath)
             };
             ExecuteCommand(CREATE_QUERY, parameters);
         }
@@ -85,7 +86,8 @@ namespace VandalFood.DAL.Repositories
             new SqlParameter("@Description", entity.Description),
             new SqlParameter("@Weight", entity.Weight),
             new SqlParameter("@Price", entity.Price),
-            new SqlParameter("@ProductTypeId", entity.ProductTypeId)
+            new SqlParameter("@ProductTypeId", entity.ProductTypeId),
+            new SqlParameter("@PhotoPath", entity.PhotoPath),
             };
             ExecuteCommand(UPDATE_QUERY, parameters);
 

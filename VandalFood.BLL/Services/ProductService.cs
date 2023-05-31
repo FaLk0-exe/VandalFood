@@ -18,7 +18,7 @@ namespace VandalFood.BLL.Services
             _productValidator = productValidator;
             _productRepository = operatorRepository;
         }
-        public void CreateOperator(Product product)
+        public void Create(Product product)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace VandalFood.BLL.Services
             }
             _productRepository.Create(product);
         }
-        public void UpdateOperator(Product product)
+        public void Update(Product product)
         {
             if (_productRepository.Get(product.Id) is null)
                 throw new Exception($"Product with ID {product.Id} is not found");
@@ -45,7 +45,7 @@ namespace VandalFood.BLL.Services
             _productRepository.Update(product);
         }
 
-        public void DeleteOperator(int id)
+        public void Delete(int id)
         {
             var product = _productRepository.Get(id);
             if (product is null)
