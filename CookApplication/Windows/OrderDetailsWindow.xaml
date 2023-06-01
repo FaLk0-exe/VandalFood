@@ -1,0 +1,25 @@
+﻿<Window x:Class="CookApplication.Windows.OrderDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CookApplication.Windows"
+        mc:Ignorable="d"
+        Title="OrderDetailsWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="157*"/>
+			<ColumnDefinition Width="643*"/>
+		</Grid.ColumnDefinitions>
+		<DataGrid CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsReadOnly="True" CanUserDeleteRows="False" x:Name="ItemsGrid" AutoGenerateColumns="False" Margin="0,0,555,0" Grid.ColumnSpan="2">
+			<DataGrid.Columns>
+				<DataGridTextColumn Width="150" Header="Товар" Binding="{Binding Title}"/>
+				<DataGridTextColumn Width="150" Header="Кількість" Binding="{Binding Amount}"/>
+			</DataGrid.Columns>
+		</DataGrid>
+		<Button x:Name="AcceptButton" Content="Взяти замовлення у приготування" HorizontalAlignment="Left" Margin="261,284,0,0" VerticalAlignment="Top" Width="205" Click="Button_Click" Grid.Column="1"/>
+		<Label HorizontalAlignment="Left" Margin="335,199,0,0" VerticalAlignment="Top" Width="57" Grid.Column="1"/>
+		<Label x:Name ="TimeLabel" Content="" HorizontalAlignment="Left" Margin="305,230,0,0" VerticalAlignment="Top" Width="106" Grid.Column="1"/>
+		<Button x:Name ="CompleteButton" Visibility="Hidden" Content="Завершити замовлення" HorizontalAlignment="Left" Margin="261,294,0,0" VerticalAlignment="Top" Width="205" Click="CompleteButton_Click" Grid.Column="1"/>
+	</Grid>
+</Window>

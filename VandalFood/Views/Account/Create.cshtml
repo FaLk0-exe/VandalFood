@@ -4,31 +4,29 @@
     ViewData["Title"] = "CreateOperator";
 }
 
-<h1>CreateOperator</h1>
-
-<h4>Operator</h4>
+<h1>Створення нового оператора</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="TryCreate">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Login" class="control-label"></label>
+                <label asp-for="Login" class="control-label">Логін</label>
                 <input asp-for="Login" class="form-control" />
                 <span asp-validation-for="Login" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
+                <label asp-for="Password" class="control-label">Пароль</label>
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LeftName" class="control-label"></label>
+                <label asp-for="LeftName" class="control-label">Ім'я</label>
                 <input asp-for="LeftName" class="form-control" />
                 <span asp-validation-for="LeftName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="RightName" class="control-label"></label>
+                <label asp-for="RightName" class="control-label">Прізвище</label>
                 <input asp-for="RightName" class="form-control" />
                 <span asp-validation-for="RightName" class="text-danger"></span>
             </div>
@@ -40,14 +38,14 @@
                 </select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Створити" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Get">Назад до списку</a>
+    <a asp-action="Get" asp-controller="Product">Назад до каталогу</a>
 </div>
 
 @section Scripts {

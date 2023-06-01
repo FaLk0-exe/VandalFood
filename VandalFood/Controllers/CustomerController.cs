@@ -8,9 +8,9 @@ using VandalFood.Models.Customer;
 
 namespace VandalFood.Controllers
 {
+    [Authorize(Roles = "Customer")]
     public class CustomerController : Controller
     {
-        [Authorize(Roles = "Customer")]
         public ActionResult Details([FromServices] CustomerService customerService)
         {
             var customer = customerService.Get(Convert.ToInt32(HttpContext.User.Claims.First(s => s.Type == "Id").Value));

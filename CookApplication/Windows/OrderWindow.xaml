@@ -1,0 +1,25 @@
+﻿<Window x:Class="CookApplication.Windows.OrderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CookApplication.Windows"
+        mc:Ignorable="d"
+        Title="OrderWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid>
+		<DataGrid CanUserAddRows="False" CanUserResizeColumns="False" CanUserResizeRows="False" IsReadOnly="True" CanUserDeleteRows="False" x:Name="OrderGrid" AutoGenerateColumns="False">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Дата замовлення" Binding="{Binding OrderDate}"/>
+				<DataGridTextColumn Width="600" Header="Перелік продуктів" Binding="{Binding Products}"/>
+				<DataGridTemplateColumn Width= "150">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content="До замовлення" Click="Button_Click"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+			</DataGrid.Columns>
+		</DataGrid>
+
+	</Grid>
+</Window>
