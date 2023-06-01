@@ -5,31 +5,31 @@
 
 
 
-<h2>Edit Product</h2>
+<h2>Редагування продукту</h2>
 
 <form asp-action="TryCreate" method="post" enctype="multipart/form-data">
     <div class="form-group">
-        <label asp-for="Title" class="control-label"></label>
+        <label asp-for="Title" class="control-label">Назва</label>
         <input asp-for="Title" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Description" class="control-label"></label>
+        <label asp-for="Description" class="control-label">Опис</label>
         <input asp-for="Description" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Price" class="control-label"></label>
+        <label asp-for="Price" class="control-label">Ціна</label>
         <input asp-for="Price" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Weight" class="control-label"></label>
+        <label asp-for="Weight" class="control-label">Вага</label>
         <input asp-for="Weight" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="ProductTypeId" class="control-label"></label>
+        <label asp-for="ProductTypeId" class="control-label">Тип продукту</label>
         <select asp-for="ProductTypeId" class="form-select">
             @foreach (var pt in Enum.GetValues<ProductTypeEnum>().Select(s => (int)s))
             {
@@ -50,7 +50,7 @@
     </div>
     <br>
     <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
+        <input type="submit" value="Зберегти" class="btn btn-primary" />
     </div>
 </form>
 

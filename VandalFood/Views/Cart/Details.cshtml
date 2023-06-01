@@ -6,10 +6,10 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
+            <th>Продукт</th>
+            <th>Ціна</th>
+            <th>Кількість</th>
+            <th>Ітого</th>
             <th></th>
         </tr>
     </thead>
@@ -28,7 +28,7 @@
                 </td>
                 <td class="align-middle">@((item.Product.Price * item.Count).ToString("C"))</td>
                 <td>
-                    <a class="btn btn-danger" asp-action="Remove" asp-route-id="@item.Product.Id">Удалить</a>
+                    <a class="btn btn-danger" asp-action="Remove" asp-route-id="@item.Product.Id">Видалити</a>
                 </td>
             </tr>
         }
@@ -36,8 +36,8 @@
 </table>
 @if (Model.Any())
 {
-    <span>Итого: @Model.Sum(s=>s.Count*s.Product.Price).ToString("C")</span>
+    <span>Ітого: @Model.Sum(s=>s.Count*s.Product.Price).ToString("C")</span>
     <br>
     <br>
-    <a class="btn btn-primary" asp-action="Create" asp-controller="Order">Оформить заказ</a>
+    <a class="btn btn-primary" asp-action="Create" asp-controller="Order">Оформити замовлення</a>
 }

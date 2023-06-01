@@ -11,27 +11,27 @@
     <input type="hidden" asp-for="Id" />
 
     <div class="form-group">
-        <label asp-for="Title" class="control-label"></label>
+        <label asp-for="Title" class="control-label">Назва</label>
         <input asp-for="Title" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Description" class="control-label"></label>
+        <label asp-for="Description" class="control-label">Опис</label>
         <input asp-for="Description" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Price" class="control-label"></label>
+        <label asp-for="Price" class="control-label">Ціна</label>
         <input asp-for="Price" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Weight" class="control-label"></label>
+        <label asp-for="Weight" class="control-label">Вага</label>
         <input asp-for="Weight" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="ProductTypeId" class="control-label"></label>
+        <label asp-for="ProductTypeId" class="control-label">Тип продукту</label>
         <select asp-for="ProductTypeId" class="form-select">
             @foreach (var pt in Enum.GetValues<ProductTypeEnum>().Select(s => (int)s))
             {
@@ -41,7 +41,7 @@
     </div>
 
     <div class="form-group mt-2">
-        <label asp-for="PhotoPath" class="control-label"></label>
+        <label asp-for="PhotoPath" class="control-label">Фото</label>
         <input type="file" name="photo" class="form-control" />
         <input asp-for="PhotoPath" hidden/>
     </div>
@@ -52,7 +52,7 @@
     </div>
     <br>
     <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
+        <input type="submit" value="Редагувати" class="btn btn-primary" />
     </div>
 </form>
 

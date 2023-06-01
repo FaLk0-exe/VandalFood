@@ -30,6 +30,9 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Create">Створити новий продукт</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Get">Працівники</a>
+                            </li>
                         }
                         @if (Context.User.IsInRole("Operator"))
                         {
@@ -57,7 +60,7 @@
                             @if (Context.User.IsInRole("Customer"))
                             {
                                 <li class="nav-item align-self-center">
-                                    <a asp-area="">Профіль</a>
+                                    <a asp-controller="Customer" asp-action="Details" asp-area="">Профіль</a>
                                 </li>
                             }
                             @if(Context.User.IsInRole("Admin"))

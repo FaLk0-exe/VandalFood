@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using VandalFood.BLL.Helpers;
 using VandalFood.BLL.Services;
@@ -15,6 +17,56 @@ namespace VandalFood.Controllers
         public AccountController()
         {
                 
+        }
+
+        [Authorize(Roles ="Admin")]
+        public ActionResult Create()
+        {
+            return View(new Operator());
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult TryCreate([FromServices] OperatorService operatorService, Operator @operator)
+        {
+            operatorService.CreateOperator(@operator);
+            return RedirectToAction(actionName: "Get",controllerName:"Account");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult Get([FromServices] OperatorService operatorService)
+        {
+            return View(operatorService.Get());
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult Edit([FromServices] OperatorService operatorService,int id)
+        {
+            var @operator = operatorService.Get(id);
+            if (@operator is null)
+                return NotFound();
+
+            return View(@operator);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult TryEdit([FromServices] OperatorService operatorService, Operator @operator)
+        {
+            var existedOperator = operatorService.Get(@operator.Id);
+            if (@operator.Password.IsNullOrEmpty())
+                @operator.Password = existedOperator.Password;
+            operatorService.UpdateOperator(@operator);
+            return RedirectToAction(actionName: "Get", controllerName: "Account");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult TryDelete([FromServices] OperatorService operatorService,int id)
+        {
+            var @operator = operatorService.Get(id);
+            if (@operator is null)
+                return NotFound();
+            operatorService.DeleteOperator(id);
+            return RedirectToAction(actionName: "Get", controllerName: "Account");
         }
 
         public ActionResult SignUp(string? message)
