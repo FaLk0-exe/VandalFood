@@ -183,6 +183,7 @@ namespace VandalFood.Controllers
         {
             var customerOrder = orderService.Get(id);
             customerOrder.OrderStatusId = (int)OrderStatusEnum.Confirmed;
+            customerOrder.OperatorId = Convert.ToInt32(HttpContext.User.Claims.First(s => s.Type == "Id").Value);
             orderService.Update(customerOrder);
             return RedirectToAction(controllerName: "Order", actionName: "Get");
         }
